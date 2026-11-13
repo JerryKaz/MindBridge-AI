@@ -12,7 +12,6 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "seed": "tsx --env-file-if-exists=.env src/scripts/seed.ts",
-    "create-admin": "tsx --env-file-if-exists=.env src/scripts/create-admin.ts",
     "eval:safety": "tsx src/scripts/evaluate-safety.ts"
   },
   "dependencies": {

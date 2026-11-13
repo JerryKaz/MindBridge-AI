@@ -6,7 +6,7 @@ Fields ending in `Enc` hold AES-256-GCM ciphertext (`v1:<iv>:<tag>:<data>`).
 
 | Collection | Purpose | Key fields | Indexes | Retention |
 | --- | --- | --- | --- | --- |
-| `users` | Students and admins | email (unique), passwordHash (Argon2id, `select:false`), displayName, role, status, university?, yearOfStudy?, onboardingCompleted, lastActiveAt, passwordReset{tokenHash, expiresAt} | `email` unique; `role,status,createdAt`; `university`; `lastActiveAt` | Until account deletion |
+| `users` | Students | email (unique), passwordHash (Argon2id, `select:false`), displayName, status, university?, yearOfStudy?, onboardingCompleted, lastActiveAt, passwordReset{tokenHash, expiresAt} | `email` unique; `status,createdAt`; `university`; `lastActiveAt` | Until account deletion |
 | `refreshTokens` | Session rotation / revocation | user, tokenHash (SHA-256), family, expiresAt, revokedAt, replacedBy | `tokenHash` unique; `user,family`; TTL on `expiresAt` | Auto-expires |
 | `universities` | Optional profile selection | name (unique), shortName, city, active | `name` unique; `active,name` | Reference data |
 | `conversations` | Chat sessions | student, title (topic-based, not message text), lastMessagePreviewEnc, messageCount, recentTopics[intent], highestSafetyLevel, lastMessageAt | `student,updatedAt` | Until the student deletes it / the account |
@@ -18,7 +18,6 @@ Fields ending in `Enc` hold AES-256-GCM ciphertext (`v1:<iv>:<tag>:<data>`).
 | `supportResources` | Human support directory | name, category, description, university?, phone/email/website, location, region, availability, isFree, verificationStatus, verificationSource, verifiedAt, verifiedBy, published, views | `verificationStatus,published,category`; `university,verificationStatus` | Content |
 | `safetyEvents` | That the safety pathway activated | student, conversation, level, sources (detector ids), actionTaken — **no message text** | `student,createdAt`; `level,createdAt`; TTL `createdAt` | `SAFETY_EVENT_RETENTION_DAYS` (default 90) |
 | `aiInteractions` | Pipeline metadata for evaluation | conversation, intent, confidence, signals, safetyLevel, strategy, provider, validation, usedFallback, latencyMs — **no text, no student id** | `conversation`; TTL `createdAt` | `AI_INTERACTION_RETENTION_DAYS` (default 30) |
-| `auditLogs` | Sensitive admin/privacy actions | actor, action, targetType, targetId, metadata, ip | `createdAt`; `actor,createdAt`; `targetType,targetId` | Keep per policy |
 
 ## Relationships
 
@@ -33,7 +32,7 @@ messages *─* supportResources (resourceIds shown with a reply)
 ## Deletion cascade
 
 * Delete conversation → messages, aiInteractions and safetyEvents for that conversation, then the conversation.
-* Delete account → every conversation (as above), moodEntries, studentMemories, consents, safetyEvents, refreshTokens, then the user. An audit entry records that an erasure happened, without personal data.
+* Delete account → every conversation (as above), moodEntries, studentMemories, consents, safetyEvents, refreshTokens, then the user. A log line records that an erasure happened, without personal data.
 
 ## Data minimisation notes
 

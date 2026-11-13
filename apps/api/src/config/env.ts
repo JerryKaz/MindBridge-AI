@@ -9,7 +9,7 @@ const envSchema = z.object({
   PORT: z.coerce.number().int().positive().default(4000),
   CORS_ORIGINS: z
     .string()
-    .default('http://localhost:5173,http://localhost:8081')
+    .default('http://localhost:8081')
     .transform((v) => v.split(',').map((s) => s.trim()).filter(Boolean)),
   TRUST_PROXY: z.coerce.number().int().min(0).default(0),
   MONGODB_URI: z.string().min(1),

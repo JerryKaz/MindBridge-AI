@@ -2,8 +2,7 @@ import mongoose from 'mongoose';
 import request from 'supertest';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { createApp } from '../src/app.js';
-import { hashPassword } from '../src/modules/auth/password.js';
-import { UserModel } from '../src/modules/students/user.model.js';
+import { SupportResourceModel } from '../src/modules/support/support-resource.model.js';
 
 /**
  * End-to-end API tests against a real MongoDB. Runs when TEST_MONGODB_URI is
@@ -103,37 +102,22 @@ describe.skipIf(!uri)('API integration (MongoDB)', () => {
     await request(app).delete(`${api}/moods/${entry.body.id}`).set('Authorization', `Bearer ${b.token}`).expect(404);
   });
 
-  it('only shows verified, published support resources and audits admin actions', async () => {
-    await UserModel.create({ email: 'admin@example.com', passwordHash: await hashPassword('adminpass2026'), displayName: 'Admin', role: 'ADMIN' });
-    const login = await request(app).post(`${api}/auth/admin/login`).send({ email: 'admin@example.com', password: 'adminpass2026' }).expect(200);
-    const admin = { Authorization: `Bearer ${login.body.tokens.accessToken}` };
-
-    // Cannot publish unverified
-    await request(app).post(`${api}/admin/support-resources`).set(admin)
-      .send({ name: 'Test Counselling Unit', category: 'UNIVERSITY_COUNSELLING', description: 'Synthetic test resource', published: true })
-      .expect(400);
-    const created = await request(app).post(`${api}/admin/support-resources`).set(admin)
-      .send({ name: 'Test Counselling Unit', category: 'UNIVERSITY_COUNSELLING', description: 'Synthetic test resource' })
-      .expect(201);
-
+  it('only shows verified, published support resources', async () => {
+    await SupportResourceModel.create([
+      { name: 'Unverified Unit', category: 'UNIVERSITY_COUNSELLING', description: 'Synthetic test resource' },
+      {
+        name: 'Verified Unit',
+        category: 'UNIVERSITY_COUNSELLING',
+        description: 'Synthetic test resource',
+        verificationStatus: 'VERIFIED',
+        verificationSource: 'Synthetic test fixture',
+        verifiedAt: new Date(),
+        published: true,
+      },
+    ]);
     const s = await registerStudent('reader@example.com');
-    const before = await request(app).get(`${api}/support/resources`).set('Authorization', `Bearer ${s.token}`).expect(200);
-    expect(before.body).toHaveLength(0);
-
-    await request(app).put(`${api}/admin/support-resources/${created.body.id}`).set(admin)
-      .send({ verificationStatus: 'VERIFIED', verificationSource: 'Phoned the unit on 2026-11-10', published: true })
-      .expect(200);
-    const after = await request(app).get(`${api}/support/resources`).set('Authorization', `Bearer ${s.token}`).expect(200);
-    expect(after.body).toHaveLength(1);
-
-    const audit = await request(app).get(`${api}/admin/audit-logs`).set(admin).expect(200);
-    expect(audit.body.items.map((i: { action: string }) => i.action)).toEqual(
-      expect.arrayContaining(['SUPPORT_RESOURCE_CREATED', 'SUPPORT_RESOURCE_VERIFIED']),
-    );
-
-    const analytics = await request(app).get(`${api}/admin/analytics`).set(admin).expect(200);
-    expect(analytics.body.totals.students).toBeGreaterThan(0);
-    expect(JSON.stringify(analytics.body)).not.toMatch(/@example\.com/);
+    const res = await request(app).get(`${api}/support/resources`).set('Authorization', `Bearer ${s.token}`).expect(200);
+    expect(res.body.map((r: { name: string }) => r.name)).toEqual(['Verified Unit']);
   });
 
   it('exports and fully deletes a student account', async () => {

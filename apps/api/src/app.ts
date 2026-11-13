@@ -5,7 +5,6 @@ import mongoose from 'mongoose';
 import { env } from './config/env.js';
 import { errorHandler, notFoundHandler } from './common/error-handler.js';
 import { globalLimiter } from './common/rate-limit.js';
-import { adminRouter } from './modules/admin/admin.routes.js';
 import { authRouter } from './modules/auth/auth.routes.js';
 import { MongoConversationStore } from './modules/conversations/conversation.store.js';
 import { conversationsRouter } from './modules/conversations/conversations.routes.js';
@@ -58,7 +57,6 @@ export function createApp(deps: AppDeps = {}): Express {
   api.use('/consents', consentsRouter);
   api.use('/privacy', privacyRouter);
   api.use('/memories', memoriesRouter);
-  api.use('/admin', adminRouter);
   app.use('/api/v1', api);
 
   app.use(notFoundHandler);

@@ -1,10 +1,7 @@
 /**
- * Canonical enumerations shared by the API, mobile app and admin dashboard.
+ * Canonical enumerations shared by the API and mobile app.
  * Arrays are `as const` so they can drive both Zod schemas and TS union types.
  */
-
-export const USER_ROLES = ['STUDENT', 'ADMIN', 'SUPER_ADMIN'] as const;
-export type UserRole = (typeof USER_ROLES)[number];
 
 export const ACCOUNT_STATUSES = ['ACTIVE', 'DEACTIVATED'] as const;
 export type AccountStatus = (typeof ACCOUNT_STATUSES)[number];

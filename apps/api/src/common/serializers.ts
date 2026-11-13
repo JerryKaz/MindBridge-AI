@@ -11,7 +11,6 @@ export function toProfile(u: {
   _id: Types.ObjectId;
   email: string;
   displayName: string;
-  role: StudentProfile['role'];
   status: StudentProfile['status'];
   university?: Ref;
   yearOfStudy?: number | null;
@@ -22,7 +21,6 @@ export function toProfile(u: {
     id: u._id.toString(),
     email: u.email,
     displayName: u.displayName,
-    role: u.role,
     status: u.status,
     university: populatedName(u.university),
     yearOfStudy: u.yearOfStudy ?? null,

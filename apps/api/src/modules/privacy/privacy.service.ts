@@ -2,7 +2,7 @@ import { decryptField } from '../../common/crypto.js';
 import { unauthorized } from '../../common/errors.js';
 import { RefreshTokenModel } from '../auth/refresh-token.model.js';
 import { verifyPassword } from '../auth/password.js';
-import { recordAudit } from '../audit/audit.service.js';
+import { logger } from '../../common/logger.js';
 import { ConversationModel } from '../conversations/conversation.model.js';
 import { MessageModel } from '../conversations/message.model.js';
 import { AiInteractionModel } from '../intelligence/ai-interaction.model.js';
@@ -77,6 +77,6 @@ export async function deleteAccount(studentId: string, password: string, ip: str
     RefreshTokenModel.deleteMany({ user: studentId }),
   ]);
   await UserModel.deleteOne({ _id: studentId });
-  // The audit entry keeps no personal data — only that an erasure happened.
-  await recordAudit({ actorId: null, action: 'ACCOUNT_SELF_DELETED', targetType: 'user', targetId: null, ip });
+  // The log line keeps no personal data — only that an erasure happened.
+  logger.info({ event: 'ACCOUNT_SELF_DELETED' }, 'Student account erased');
 }

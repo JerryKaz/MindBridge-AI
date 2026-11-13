@@ -1,6 +1,6 @@
 # CI
 
-`github-actions-ci.yml` is the GitHub Actions pipeline (typecheck, unit/HTTP tests, MongoDB integration tests via a service container, safety evaluation, API/admin builds, mobile bundle check).
+`github-actions-ci.yml` is the GitHub Actions pipeline (typecheck, unit/HTTP tests, MongoDB integration tests via a service container, safety evaluation, API build, mobile bundle check).
 
 Activate it by moving it into place:
 

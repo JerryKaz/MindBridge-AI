@@ -1,12 +1,11 @@
 import { Schema, model, type InferSchemaType, type HydratedDocument } from 'mongoose';
-import { ACCOUNT_STATUSES, USER_ROLES } from '@mindbridge/shared';
+import { ACCOUNT_STATUSES } from '@mindbridge/shared';
 
 const userSchema = new Schema(
   {
     email: { type: String, required: true, lowercase: true, trim: true, maxlength: 254 },
     passwordHash: { type: String, required: true, select: false },
     displayName: { type: String, required: true, trim: true, maxlength: 50 },
-    role: { type: String, enum: USER_ROLES, default: 'STUDENT', required: true },
     status: { type: String, enum: ACCOUNT_STATUSES, default: 'ACTIVE', required: true },
     university: { type: Schema.Types.ObjectId, ref: 'University', default: null },
     yearOfStudy: { type: Number, min: 1, max: 10, default: null },
@@ -21,7 +20,7 @@ const userSchema = new Schema(
 );
 
 userSchema.index({ email: 1 }, { unique: true });
-userSchema.index({ role: 1, status: 1, createdAt: -1 });
+userSchema.index({ status: 1, createdAt: -1 });
 userSchema.index({ university: 1 });
 userSchema.index({ lastActiveAt: -1 });
 

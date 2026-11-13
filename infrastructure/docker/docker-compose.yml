@@ -1,4 +1,4 @@
-# Local full stack: MongoDB + API + admin dashboard.
+# Local stack: MongoDB + API.
 #   cp apps/api/.env.example apps/api/.env   (fill in secrets)
 #   docker compose -f infrastructure/docker/docker-compose.yml up --build
 services:
@@ -22,13 +22,6 @@ services:
       mongo: { condition: service_healthy }
     ports: ["4000:4000"]
 
-  admin:
-    build:
-      context: ../..
-      dockerfile: infrastructure/docker/admin.Dockerfile
-      args: { VITE_API_URL: "http://localhost:4000" }
-    depends_on: [api]
-    ports: ["5173:80"]
 
 volumes:
   mongo-data:

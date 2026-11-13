@@ -21,11 +21,6 @@ authRouter.post('/login', validate(loginSchema), async (req, res) => {
   res.json(await auth.login(req.body));
 });
 
-/** Admin dashboard login — rejects student accounts with the same generic error. */
-authRouter.post('/admin/login', validate(loginSchema), async (req, res) => {
-  res.json(await auth.login(req.body, { requireAdmin: true }));
-});
-
 authRouter.post('/refresh', validate(refreshSchema), async (req, res) => {
   res.json({ tokens: await auth.refresh(req.body.refreshToken) });
 });

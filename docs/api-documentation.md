@@ -15,7 +15,6 @@ Rate limits: 300 req/min/IP overall; 20 auth attempts per 15 min/IP; 15 chat mes
 | --- | --- | --- | --- |
 | POST | `/auth/register` | `{ email, password, displayName, acceptedTerms: true }` | 201 `{ user, tokens }` |
 | POST | `/auth/login` | `{ email, password }` | `{ user, tokens }` |
-| POST | `/auth/admin/login` | `{ email, password }` (admins only) | `{ user, tokens }` |
 | POST | `/auth/refresh` | `{ refreshToken }` | `{ tokens }` (rotates; reuse revokes the session family) |
 | POST | `/auth/logout` | `{ refreshToken }` | 204 |
 | POST | `/auth/forgot-password` | `{ email }` | 202 (same response whether or not the account exists) |
@@ -81,17 +80,6 @@ Rate limits: 300 req/min/IP overall; 20 auth attempts per 15 min/IP; 15 chat mes
 | DELETE | `/memories/:id` | |
 | POST | `/privacy/data-export` | Full JSON export (decrypted) |
 | POST | `/privacy/account-deletion` | `{ password, confirm: "DELETE" }` → 204, hard delete |
-
-## Administration (ADMIN / SUPER_ADMIN)
-| GET | `/admin/analytics` | Aggregates only (`AdminAnalytics`) |
-| --- | --- | --- |
-| GET | `/admin/users?page&pageSize&search` | Account list (no wellbeing data) |
-| PATCH | `/admin/users/:id/status` | `{ status: ACTIVE\|DEACTIVATED }` — revokes sessions, audited |
-| GET/POST | `/admin/wellness-activities` | |
-| PUT | `/admin/wellness-activities/:id` | Audited |
-| GET/POST | `/admin/support-resources` | |
-| PUT | `/admin/support-resources/:id` | Verifying requires `verificationSource`; publishing requires `VERIFIED`; audited |
-| GET | `/admin/audit-logs?page&pageSize` | |
 
 `GET /health` (outside `/api/v1`) → `{ status, db, aiProvider }`, 503 when the database is down.
 

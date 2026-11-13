@@ -19,7 +19,7 @@ export const UNIVERSITIES = [
 /**
  * Starter wellness activities based on widely used, low-risk self-help
  * techniques. They are seeded as PENDING_PROFESSIONAL_REVIEW: a qualified
- * professional should review them before the status is changed in the admin dashboard.
+ * professional should review them, then set reviewStatus/reviewedBy here.
  */
 export const WELLNESS_ACTIVITIES: WellnessActivityInput[] = [
   {

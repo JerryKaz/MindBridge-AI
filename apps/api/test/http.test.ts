@@ -9,7 +9,7 @@ import { signAccessToken } from '../src/common/tokens.js';
  * validation, error handling and security headers.
  */
 const app = createApp();
-const studentToken = signAccessToken({ sub: '64b7f0c2a1b2c3d4e5f60718', role: 'STUDENT' });
+const studentToken = signAccessToken({ sub: '64b7f0c2a1b2c3d4e5f60718' });
 
 describe('HTTP security boundary', () => {
   it('sets secure headers and hides the framework', async () => {
@@ -33,7 +33,7 @@ describe('HTTP security boundary', () => {
   });
 
   it('scenario 9b: rejects an expired token', async () => {
-    const expired = jwt.sign({ role: 'STUDENT' }, process.env.JWT_ACCESS_SECRET!, {
+    const expired = jwt.sign({}, process.env.JWT_ACCESS_SECRET!, {
       subject: '64b7f0c2a1b2c3d4e5f60718',
       issuer: 'mindbridge-api',
       audience: 'mindbridge-clients',
@@ -45,14 +45,16 @@ describe('HTTP security boundary', () => {
   });
 
   it('rejects a token signed with another secret', async () => {
-    const forged = jwt.sign({ role: 'ADMIN' }, 'x'.repeat(40), { subject: 'a', issuer: 'mindbridge-api', audience: 'mindbridge-clients' });
-    const res = await request(app).get('/api/v1/admin/analytics').set('Authorization', `Bearer ${forged}`);
+    const forged = jwt.sign({}, 'x'.repeat(40), { subject: 'a', issuer: 'mindbridge-api', audience: 'mindbridge-clients' });
+    const res = await request(app).get('/api/v1/students/me').set('Authorization', `Bearer ${forged}`);
     expect(res.status).toBe(401);
   });
 
-  it('forbids students from admin endpoints', async () => {
+  it('has no admin API', async () => {
     const res = await request(app).get('/api/v1/admin/analytics').set('Authorization', `Bearer ${studentToken}`);
-    expect(res.status).toBe(403);
+    expect(res.status).toBe(404);
+    const login = await request(app).post('/api/v1/auth/admin/login').send({ email: 'a@b.co', password: 'whatever123' });
+    expect(login.status).toBe(404);
   });
 
   it('validates registration input before touching the database', async () => {

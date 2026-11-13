@@ -74,7 +74,7 @@ Failures are replaced with a strategy-specific reviewed fallback and logged (iss
 
 * `pnpm --filter @mindbridge/api test` — unit tests for every stage plus pipeline scenarios 1, 2, 5, 6, 7, 8, 10 and provider outage.
 * `pnpm --filter @mindbridge/api eval:safety` — recall, false-positive rate and intent accuracy on `src/scripts/evaluation-dataset.ts` (synthetic). The current lexicons were tuned against this set, so its scores are **in-sample**; extend it with new, held-out synthetic cases (ideally written by a mental-health professional) before drawing conclusions.
-* Metrics in production (admin Analytics): fallback rate, latency, weekly safety activations.
+* Metrics in production: fallback rate, latency and safety activations are recorded in `aiInteractions` / `safetyEvents` and in the pino logs.
 
 ## Limitations (be explicit in the showcase)
 

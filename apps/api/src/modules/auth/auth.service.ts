@@ -13,7 +13,7 @@ import { RefreshTokenModel } from './refresh-token.model.js';
 
 const RESET_TTL_MS = 30 * 60_000;
 
-async function issueTokens(userId: string, role: AuthResponse['user']['role'], family = randomToken(16)): Promise<AuthTokens> {
+async function issueTokens(userId: string, family = randomToken(16)): Promise<AuthTokens> {
   const refreshToken = randomToken();
   await RefreshTokenModel.create({
     user: userId,
@@ -21,7 +21,7 @@ async function issueTokens(userId: string, role: AuthResponse['user']['role'], f
     family,
     expiresAt: new Date(Date.now() + env.REFRESH_TOKEN_TTL_DAYS * 86_400_000),
   });
-  return { accessToken: signAccessToken({ sub: userId, role }), refreshToken, expiresIn: env.ACCESS_TOKEN_TTL_SECONDS };
+  return { accessToken: signAccessToken({ sub: userId }), refreshToken, expiresIn: env.ACCESS_TOKEN_TTL_SECONDS };
 }
 
 export async function register(input: RegisterInput): Promise<AuthResponse> {
@@ -39,10 +39,10 @@ export async function register(input: RegisterInput): Promise<AuthResponse> {
     policyVersion: CURRENT_POLICY_VERSION,
     history: [{ granted: true, policyVersion: CURRENT_POLICY_VERSION }],
   });
-  return { user: toProfile(user), tokens: await issueTokens(user.id, user.role) };
+  return { user: toProfile(user), tokens: await issueTokens(user.id) };
 }
 
-export async function login(input: LoginInput, opts: { requireAdmin?: boolean } = {}): Promise<AuthResponse> {
+export async function login(input: LoginInput): Promise<AuthResponse> {
   const user = await UserModel.findOne({ email: input.email }).select('+passwordHash').populate('university', 'name');
   if (!user) {
     await burnPasswordCheck(input.password);
@@ -50,10 +50,9 @@ export async function login(input: LoginInput, opts: { requireAdmin?: boolean } 
   }
   if (!(await verifyPassword(user.passwordHash, input.password))) throw unauthorized('Email or password is incorrect');
   if (user.status !== 'ACTIVE') throw new AppError(403, 'ACCOUNT_DEACTIVATED', 'This account has been deactivated');
-  if (opts.requireAdmin && user.role === 'STUDENT') throw unauthorized('Email or password is incorrect');
   user.lastActiveAt = new Date();
   await user.save();
-  return { user: toProfile(user), tokens: await issueTokens(user.id, user.role) };
+  return { user: toProfile(user), tokens: await issueTokens(user.id) };
 }
 
 /**
@@ -71,7 +70,7 @@ export async function refresh(refreshToken: string): Promise<AuthTokens> {
   const user = await UserModel.findById(record.user);
   if (!user || user.status !== 'ACTIVE') throw unauthorized('Session expired. Please sign in again.');
 
-  const tokens = await issueTokens(user.id, user.role, record.family);
+  const tokens = await issueTokens(user.id, record.family);
   record.revokedAt = new Date();
   record.replacedBy = sha256(tokens.refreshToken);
   await record.save();

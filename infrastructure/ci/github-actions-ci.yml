@@ -35,10 +35,8 @@ jobs:
         run: pnpm test
       - name: Safety engine evaluation report
         run: pnpm --filter @mindbridge/api eval:safety
-      - name: Build API and admin
-        run: |
-          pnpm --filter @mindbridge/api build
-          pnpm --filter @mindbridge/admin build
+      - name: Build API
+        run: pnpm --filter @mindbridge/api build
       - name: Bundle mobile app (web target, verifies Metro resolution)
         working-directory: apps/mobile
         run: npx expo export --platform web --output-dir /tmp/mobile-web

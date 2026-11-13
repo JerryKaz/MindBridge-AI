@@ -8,7 +8,6 @@ import type {
   ResponseStrategy,
   SafetyLevel,
   SupportCategory,
-  UserRole,
   VerificationStatus,
   WellnessCategory,
 } from './enums.js';
@@ -29,7 +28,6 @@ export interface StudentProfile {
   id: string;
   email: string;
   displayName: string;
-  role: UserRole;
   status: AccountStatus;
   university: { id: string; name: string } | null;
   yearOfStudy: number | null;
@@ -150,54 +148,5 @@ export interface ConsentRecord {
 export interface StudentMemory {
   id: string;
   content: string;
-  createdAt: string;
-}
-
-export interface Paginated<T> {
-  items: T[];
-  total: number;
-  page: number;
-  pageSize: number;
-}
-
-export interface AdminUserRow {
-  id: string;
-  email: string;
-  displayName: string;
-  role: UserRole;
-  status: AccountStatus;
-  university: string | null;
-  createdAt: string;
-  lastActiveAt: string | null;
-}
-
-export interface AdminAnalytics {
-  generatedAt: string;
-  /** Buckets with fewer than this many students are suppressed. */
-  minCohortSize: number;
-  totals: {
-    students: number;
-    activeLast7Days: number;
-    activeLast30Days: number;
-    conversations: number;
-    moodCheckIns: number;
-    wellnessActivitiesPublished: number;
-    verifiedSupportResources: number;
-  };
-  moodDistribution: Array<{ mood: Mood; count: number }>;
-  checkInsByDay: Array<{ date: string; count: number }>;
-  messagesByDay: Array<{ date: string; count: number }>;
-  safetyLevelsByWeek: Array<{ week: string; standard: number; elevated: number; immediate: number }>;
-  registrationsByUniversity: Array<{ university: string; count: number }>;
-  aiPerformance: { avgLatencyMs: number; p95LatencyMs: number; fallbackRate: number; interactions: number };
-}
-
-export interface AuditLogEntry {
-  id: string;
-  actor: { id: string; email: string } | null;
-  action: string;
-  targetType: string;
-  targetId: string | null;
-  metadata: Record<string, unknown>;
   createdAt: string;
 }

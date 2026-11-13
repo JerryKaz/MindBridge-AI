@@ -2,17 +2,19 @@
   "name": "mindbridge-ai",
   "private": true,
   "version": "0.1.0",
-  "description": "MindBridge AI — student mental wellness and emotional support platform",
+  "description": "MindBridge AI \u2014 student mental wellness and emotional support platform",
   "packageManager": "pnpm@10.28.0",
-  "engines": { "node": ">=20.11" },
+  "engines": {
+    "node": ">=20.11"
+  },
   "scripts": {
+    "setup:env": "node scripts/setup-env.mjs",
     "build:shared": "pnpm --filter @mindbridge/shared build",
     "dev:api": "pnpm build:shared && pnpm --filter @mindbridge/api dev",
-    "dev:admin": "pnpm build:shared && pnpm --filter @mindbridge/admin dev",
     "dev:mobile": "pnpm build:shared && pnpm --filter @mindbridge/mobile start",
     "build": "pnpm -r --workspace-concurrency=1 build",
     "typecheck": "pnpm build:shared && pnpm -r typecheck",
     "test": "pnpm build:shared && pnpm -r test",
-    "seed": "pnpm --filter @mindbridge/api seed"
+    "seed": "pnpm build:shared && pnpm --filter @mindbridge/api seed"
   }
 }

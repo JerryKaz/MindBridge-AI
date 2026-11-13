@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { ACCOUNT_STATUSES, CONSENT_TYPES } from '../enums.js';
+import { CONSENT_TYPES } from '../enums.js';
 
 export const updateConsentsSchema = z.object({
   consents: z
@@ -19,5 +19,3 @@ export const createMemorySchema = z.object({
   content: z.string().trim().min(3).max(300),
 });
 export type CreateMemoryInput = z.infer<typeof createMemorySchema>;
-
-export const adminUpdateUserSchema = z.object({ status: z.enum(ACCOUNT_STATUSES) });
