@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # MindBridge AI
 
 **Your wellbeing. Your space. Your support.**
@@ -94,3 +95,6 @@ pnpm --filter @mindbridge/api eval:safety
 ## Before real-world use
 
 Professional review of safety copy, wellness content and test scenarios; legal/privacy review under Ghana's Data Protection Act, 2012 (Act 843); verified support resources; a provider agreement that excludes training on student data. See [deployment checklist](infrastructure/deployment/README.md).
+=======
+# MindBridge-AI
+>>>>>>> 6ec697f2241c4409ea8720541d81a6e2953b33f0
