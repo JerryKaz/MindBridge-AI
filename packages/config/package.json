@@ -1,0 +1,8 @@
+{
+  "name": "@mindbridge/config",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Shared TypeScript configuration for MindBridge AI",
+  "files": ["tsconfig.*.json"],
+  "scripts": { "typecheck": "echo 'no sources'" }
+}

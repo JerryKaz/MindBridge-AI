@@ -1,0 +1,10 @@
+packages:
+  - "apps/*"
+  - "packages/*"
+
+onlyBuiltDependencies:
+  - argon2
+  - esbuild
+
+# Expo/Metro resolves packages more reliably with a hoisted node_modules layout.
+nodeLinker: hoisted

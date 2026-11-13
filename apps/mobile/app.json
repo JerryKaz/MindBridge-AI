@@ -1,0 +1,16 @@
+{
+  "expo": {
+    "name": "MindBridge AI",
+    "slug": "mindbridge-ai",
+    "scheme": "mindbridge",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "backgroundColor": "#F5F8F7",
+    "ios": { "supportsTablet": true, "bundleIdentifier": "com.mindbridge.ai" },
+    "android": { "package": "com.mindbridge.ai", "adaptiveIcon": { "backgroundColor": "#2F7D6D" } },
+    "web": { "bundler": "metro", "output": "single" },
+    "plugins": ["expo-router", "expo-secure-store"],
+    "experiments": { "typedRoutes": true }
+  }
+}
